@@ -1,5 +1,6 @@
 package ru.kostylev.ksjavacore;
 
+import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 
 
@@ -10,6 +11,10 @@ public class MyList<T> implements List<Object> {
     public MyList() {
         this.size = 0;
         this.list = new Item[1];
+    }
+
+    private Object[] getList() {
+        return this.list;
     }
 
     @Override
@@ -34,12 +39,13 @@ public class MyList<T> implements List<Object> {
 
     @Override
     public Iterator<Object> iterator() {
+        //Iterator newArray = new Iterable<>();
         return null;
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return this.getList();
     }
 
     @Override
