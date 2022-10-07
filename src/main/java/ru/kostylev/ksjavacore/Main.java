@@ -21,10 +21,12 @@ public class Main {
         System.out.println("Метод toArray():" + Arrays.toString(myList.toArray()));
         System.out.println("Метод get(index): " + myList.get(1));
         System.out.println("Метод set(index): было " + myList.set(1, "100") + " стало: " + myList.get(1));
-        myList.add(6,"new element");
+        myList.add(3,"new element");
         System.out.println("Метод add(index, element): " + myList);
-        //myList.remove("Object 1");
-        //System.out.println(myList);
+        myList.remove("Object 3");
+        System.out.println("Метод remove(Object): " + myList);
+        myList.remove(3);
+        System.out.println("Метод remove(index): " + myList);
 
     }
 }

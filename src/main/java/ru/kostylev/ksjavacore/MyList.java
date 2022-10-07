@@ -116,6 +116,7 @@ public class MyList<T> implements List<T> {
             if (checkGrow(list)) {grow(list);}
             Object[] arr = slice(index,size-1);
             list[index] = element;
+//            set(index, (T) element);
             for (int i = 0; i < arr.length; i++) {
                 list[index+i+1] = arr[i];
             }
@@ -138,25 +139,48 @@ public class MyList<T> implements List<T> {
         return true;
     }
 
+    //Метод удаляет первое вхождение объекта из коллекции
+    //со смещением остальных элементов влево
     @Override
     public boolean remove(Object o) {
-        if (this.contains(o)){
-            for (int i = 0; i < size; i++) {
-                if (list[i].equals(o)){
-                    Object[] arr = new Object[size-i-1];
-                    for (int j = 0; j < size-i-1 ; j++) {
-                        arr[j] = list[i+j+1];
-                    }
-                    for (int j = 0; j < size-i-1; j++) {
-                        list[i+j] = arr[j];
-                    }
-                    list[size-1] = null;
-                    size--;
-                    return true;
-                }
+        remove(indexOf(o));
+//        if (index != -1) {
+//            Object[] arr = slice(index + 1, size - 1);
+//            for (int i = 0; i < arr.length; i++) {
+//                list[index + i] = arr[i];
+//            }
+//        }
+//        list[--size]=null;
+//            for (int i = 0; i < size; i++) {
+//                if (list[i].equals(o)){
+//                    Object[] arr = new Object[size-i-1];
+//                    for (int j = 0; j < size-i-1 ; j++) {
+//                        arr[j] = list[i+j+1];
+//                    }
+//                    for (int j = 0; j < size-i-1; j++) {
+//                        list[i+j] = arr[j];
+//                    }
+//                    list[size-1] = null;
+//                    size--;
+//                    return true;
+//                }
+//            }
+        return true;
+    }
+
+    //Метод удаляет объект коллекции по индексу
+    //со смещением остальных элементов влево
+    @Override
+    public T remove(int index) {
+        if (checkIndex(index)) {
+            Object[] arr = slice(index + 1, size - 1);
+            for (int i = 0; i < arr.length; i++) {
+                list[index + i] = arr[i];
             }
         }
-        return false;
+        T elemnet = (T) list[--size];
+        list[size]=null;
+        return elemnet;
     }
     @Override
     public Iterator<T> iterator() {
@@ -205,10 +229,7 @@ public class MyList<T> implements List<T> {
 
 
 
-    @Override
-    public T remove(int index) {
-        return null;
-    }
+
 
 
 
