@@ -53,14 +53,18 @@ public class MyList<T> implements List<T> {
     public Object[] toArray() {
         Object[] arr = new Object[size()];
         for (int i = 0; i < size; i++) {
-            arr[i] = list[i];
+            arr[i] = get(i);
         }
         return arr;
     }
     //????????????????????????????
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return null;
+        T1[] arr = (T1[]) new Object[size];
+        for (int i = 0; i < size(); i++) {
+            arr[i] = (T1) list[i];
+        }
+        return arr;
     }
     //вспомогательный метод проверяющий вхождение индекса в размер коллекции
     public boolean checkIndex(int index){
@@ -126,7 +130,6 @@ public class MyList<T> implements List<T> {
     //Метод для добавления элемента коллекции в конец
     @Override
     public boolean add(Object o) {
-        if (checkGrow(list)) {grow(list);}
         add(size,o);
         return true;
     }
@@ -190,7 +193,6 @@ public class MyList<T> implements List<T> {
 
     private void fastAdd(int index, T item){
         list[index] = item;
-        size++;
     }
 
     //Метод добавляет все элементы другой коллекции в конец списка
@@ -208,7 +210,10 @@ public class MyList<T> implements List<T> {
         if (checkIndex(index)){
             Object[] arr = slice(index,size-1);
             this.growAll(index, c);
-            for (T item: c){  fastAdd(index++,item);  }
+            for (T item: c){
+                fastAdd(index++,item);
+                size++;
+            }
             for (Object item: arr){  fastAdd(index++, (T) item);  }
             return true;
         }
@@ -217,25 +222,25 @@ public class MyList<T> implements List<T> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
+        if (containsAll(c)){
+            for (Object item: c){
+                remove(item);
+            }
+        }
         return false;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        boolean flag = false;
+        for(Object item: c){
+            if (indexOf(item) == -1){
+                add(item);
+                flag = true;
+            }
+        }
+        return flag;
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Override
     public ListIterator<T> listIterator() {
