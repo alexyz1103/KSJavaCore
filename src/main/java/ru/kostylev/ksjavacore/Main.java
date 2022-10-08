@@ -1,6 +1,7 @@
 package ru.kostylev.ksjavacore;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
@@ -10,7 +11,6 @@ public class Main {
         myList.add(10);
         myList.add("Object 3");
         myList.add("Object 4");
-
 
         System.out.println("Консольный вывод коллекции: " + myList);
         System.out.println("Метод size(): " + myList.size());
@@ -27,6 +27,18 @@ public class Main {
         System.out.println("Метод remove(Object): " + myList);
         myList.remove(3);
         System.out.println("Метод remove(index): " + myList);
+
+        ArrayList arrayList = new ArrayList();
+        for (int i = 0; i < 10; i++) {
+            arrayList.add(i);
+        }
+        System.out.println("Новый Arraylist другая коллекция: "+ arrayList);
+        myList.addAll(arrayList);
+        System.out.println("Метод addAll(collection): " + myList);
+        myList.addAll(2,arrayList);
+        System.out.println("Метод addAll(index, collection): " + myList);
+        System.out.println("Метод containsAll(colllection): " + myList.containsAll(arrayList));
+
 
     }
 }

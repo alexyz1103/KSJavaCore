@@ -27,7 +27,7 @@ public class MyList<T> implements List<T> {
     //метод возвращающий индекс первого вхождения элемента в коллекцию
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size(); i++) {
             if (list[i].equals(o)) return i;
         }
         return -1;
@@ -35,7 +35,7 @@ public class MyList<T> implements List<T> {
     //метод возвращающий индекс последнего вхождения элемента в коллекцию
     @Override
     public int lastIndexOf(Object o) {
-        for (int i = size-1; i >= 0; i--) {
+        for (int i = size()-1; i >= 0; i--) {
             if (list[i].equals(o)) return i;
         }
         return -1;
@@ -46,7 +46,7 @@ public class MyList<T> implements List<T> {
     //вернет false
     @Override
     public boolean contains(Object o) {
-        return this.indexOf(o)!=-1;
+        return indexOf(o)!=-1;
     }
     //Возвращает массив коллекции равный размеру коллекции
     @Override
@@ -95,7 +95,7 @@ public class MyList<T> implements List<T> {
         return arr;
     }
     //вспомогательный метод расширяющий массив вдвое
-    public void grow(Object[] arr){
+    private void grow(Object[] arr){
             Object[] newArr = new Object[list.length*2];
             for (int i = 0; i < size; i++) {
                 newArr[i] = list[i];
@@ -103,7 +103,7 @@ public class MyList<T> implements List<T> {
             list = newArr;
     }
     //вспомогательный метод проверяет надо ли расширять массив
-    public boolean checkGrow(Object[] arr){
+    private boolean checkGrow(Object[] arr){
         return arr.length == size;
     }
 
@@ -111,12 +111,11 @@ public class MyList<T> implements List<T> {
     // если индекс входит в диапазон, со смещением остальных элементов
     // в право
     @Override
-    public void add(int index, Object element) {
+    public void add(int index, Object o) {
         if (checkIndex(index)){
             if (checkGrow(list)) {grow(list);}
             Object[] arr = slice(index,size-1);
-            list[index] = element;
-//            set(index, (T) element);
+            list[index] = o;
             for (int i = 0; i < arr.length; i++) {
                 list[index+i+1] = arr[i];
             }
@@ -129,13 +128,6 @@ public class MyList<T> implements List<T> {
     public boolean add(Object o) {
         if (checkGrow(list)) {grow(list);}
         add(size,o);
-//        if (size == list.length){ //проверяем если размер коллекции уже равен размеру массива
-//            Object[] newArray = new Object[list.length*2]; // создаем новый массив с размером в два раза больше
-//            for (int i = 0; i < list.length; i++) { newArray[i] = list[i]; } // копируем из массива коллекции в новый расширеный
-//            this.list = newArray;//
-//        }
-//        list[size] = o;
-//        size++;
         return true;
     }
 
@@ -144,27 +136,6 @@ public class MyList<T> implements List<T> {
     @Override
     public boolean remove(Object o) {
         remove(indexOf(o));
-//        if (index != -1) {
-//            Object[] arr = slice(index + 1, size - 1);
-//            for (int i = 0; i < arr.length; i++) {
-//                list[index + i] = arr[i];
-//            }
-//        }
-//        list[--size]=null;
-//            for (int i = 0; i < size; i++) {
-//                if (list[i].equals(o)){
-//                    Object[] arr = new Object[size-i-1];
-//                    for (int j = 0; j < size-i-1 ; j++) {
-//                        arr[j] = list[i+j+1];
-//                    }
-//                    for (int j = 0; j < size-i-1; j++) {
-//                        list[i+j] = arr[j];
-//                    }
-//                    list[size-1] = null;
-//                    size--;
-//                    return true;
-//                }
-//            }
         return true;
     }
 
@@ -182,29 +153,65 @@ public class MyList<T> implements List<T> {
         list[size]=null;
         return elemnet;
     }
+    //Метод удаляет все элементы путем сосздания нового пустого массива
+    //с изначальным размером и передачи ссылки на новый пустой массив
+    @Override
+    public void clear() {
+        Object[] newArray = new Object[10];
+        list = newArray;
+        size = 0;
+    }
+
     @Override
     public Iterator<T> iterator() {
         //Iterator newArray = new Iterable<>();
         return null;
     }
 
-
-
-
-
-
+    //Метод проверяет на наличие всех элементов другой коллекции,
+    // если хотябы один элемент не совпадет вернет false
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object item: c){
+            if (indexOf(item) == -1) { return false; }
+        }
+        return true;
     }
 
+    private void growAll(int index, Collection<? extends T> c){
+        if (list.length < this.size() + c.size()){
+            Object[] newArray = new Object[this.size()+c.size()];
+            for (int i = 0; i < index; i++) {
+                newArray[i] = list[i];
+            }
+            list = newArray;
+        }
+    }
+
+    private void fastAdd(int index, T item){
+        list[index] = item;
+        size++;
+    }
+
+    //Метод добавляет все элементы другой коллекции в конец списка
+    //возвращает true или false
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return false;
+        int index = size;
+        return addAll(index,c);
     }
 
+    //Метод добавляет в указаную позицию индекса все элементы из другой коллекции,
+    //надо добавить быстрое добавление без лишних проверок
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
+        if (checkIndex(index)){
+            Object[] arr = slice(index,size-1);
+            this.growAll(index, c);
+            for (T item: c){  fastAdd(index++,item);  }
+            for (Object item: arr){  fastAdd(index++, (T) item);  }
+            return true;
+        }
         return false;
     }
 
@@ -218,10 +225,7 @@ public class MyList<T> implements List<T> {
         return false;
     }
 
-    @Override
-    public void clear() {
 
-    }
 
 
 
