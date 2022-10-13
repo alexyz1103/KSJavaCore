@@ -6,12 +6,28 @@ import java.util.*;
 public class MyList<T> implements List<T> {
     private int size; // поле содержащее размер коллекции
     private Object[] list; // поле содержащие коллекцию ввиде масива
+    private static final int DEFAULT_LENGTH = 10;
 
     //Конструктор без параметров, создает массив на 10 пустых элементов
     //и задает размер коллекции 0
     public MyList() {
         this.size = 0;
-        this.list = new Object[10];
+        this.list = new Object[DEFAULT_LENGTH];
+    }
+    //Конструктор с параметрой другой коллекции,
+    //создает коллекцию нашего типа из любой другой коллекции
+    public MyList(Collection<? extends T> c){
+        Object[] arr = c.toArray();
+        if ((size = arr.length) != 0) {
+            if (c.getClass() == MyList.class) {
+                list = arr;
+            } else{
+                addAll(c);
+            }
+        } else{
+            this.size = 0;
+            this.list = new Object[DEFAULT_LENGTH];
+        }
     }
 
     @Override
@@ -57,12 +73,14 @@ public class MyList<T> implements List<T> {
         }
         return arr;
     }
-    //????????????????????????????
+    //
     @Override
     public <T1> T1[] toArray(T1[] a) {
         T1[] arr = (T1[]) new Object[size];
         for (int i = 0; i < size(); i++) {
-            arr[i] = (T1) list[i];
+            if (list[i].getClass().getCanonicalName() == arr.getClass().getCanonicalName()){
+                arr[i] = (T1) list[i];
+            }
         }
         return arr;
     }
@@ -160,15 +178,9 @@ public class MyList<T> implements List<T> {
     //с изначальным размером и передачи ссылки на новый пустой массив
     @Override
     public void clear() {
-        Object[] newArray = new Object[10];
+        Object[] newArray = new Object[DEFAULT_LENGTH];
         list = newArray;
         size = 0;
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        //Iterator newArray = new Iterable<>();
-        return null;
     }
 
     //Метод проверяет на наличие всех элементов другой коллекции,
@@ -199,8 +211,7 @@ public class MyList<T> implements List<T> {
     //возвращает true или false
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        int index = size;
-        return addAll(index,c);
+        return addAll(size,c);
     }
 
     //Метод добавляет в указаную позицию индекса все элементы из другой коллекции,
@@ -242,19 +253,31 @@ public class MyList<T> implements List<T> {
         return flag;
     }
 
+
+    @Override
+    public Iterator<T> iterator() {
+        return listIterator(0);
+    }
+
     @Override
     public ListIterator<T> listIterator() {
-        return null;
+        return listIterator(0);
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return null;
+        return new ListItr(index);
     }
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return null;
+        List<T> newlist = new MyList<>();
+        if (checkIndex(fromIndex) & checkIndex(toIndex)){
+            for(int i = fromIndex; i <= toIndex; i++){
+                newlist.add((T) list[i]);
+            }
+        }
+        return newlist;
     }
 
 
@@ -262,5 +285,67 @@ public class MyList<T> implements List<T> {
     public String toString() {
         return  "size=" + size +
                 ", list=" + Arrays.toString(list);
+    }
+
+
+    public class ListItr implements ListIterator<T>{
+        int cursor;
+        int lastRet = -1;
+        ListItr(){
+            cursor = 0;
+        }
+        ListItr(int index){
+            cursor = index;
+            lastRet = index - 1;
+        }
+        @Override
+        public boolean hasNext() {
+            return cursor != size();
+        }
+
+        @Override
+        public T next() {
+            int i = cursor;
+            Object[] arr = MyList.this.list;
+            if (i >= arr.length)
+                throw new ConcurrentModificationException();
+            cursor= i + 1;
+            return (T) arr[lastRet = i];
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return cursor != 0;
+        }
+
+        @Override
+        public T previous() {
+            return MyList.this.get(previousIndex());
+        }
+
+        @Override
+        public int nextIndex() {
+            return cursor;
+        }
+
+        @Override
+        public int previousIndex() {
+            return cursor - 1;
+        }
+
+        @Override
+        public void remove() {
+            MyList.this.remove(previousIndex());
+        }
+
+        @Override
+        public void set(T t) {
+            MyList.this.set(previousIndex(), t);
+        }
+
+        @Override
+        public void add(T t) {
+            MyList.this.add(previousIndex(),t);
+        }
     }
 }

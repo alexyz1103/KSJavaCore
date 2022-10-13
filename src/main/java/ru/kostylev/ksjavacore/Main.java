@@ -1,16 +1,18 @@
 package ru.kostylev.ksjavacore;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        //создание с путым конструктором
         MyList myList = new MyList<>();
         myList.add("Object 1");
         myList.add(10);
         myList.add("Object 3");
         myList.add("Object 4");
+
+        //создание из другой коллекции
+        MyList myList1 = new MyList(myList);
 
         System.out.println("Консольный вывод коллекции: " + myList);
         System.out.println("Метод size(): " + myList.size());
@@ -32,6 +34,7 @@ public class Main {
         for (int i = 0; i < 10; i++) {
             arrayList.add(i);
         }
+
         System.out.println("Новый Arraylist другая коллекция: "+ arrayList);
         myList.addAll(arrayList);
         System.out.println("Метод addAll(collection): " + myList);
@@ -39,6 +42,12 @@ public class Main {
         System.out.println("Метод addAll(index, collection): " + myList);
         System.out.println("Метод containsAll(colllection): " + myList.containsAll(arrayList));
 
+        List newList = myList.subList(2,3);
+        System.out.println("Метод sublist(fromindex, toindex)" + newList);
 
+        MyList.ListItr listIter = (MyList.ListItr) myList.listIterator();
+        while(listIter.hasNext()){
+            System.out.println("Работа итератора: " + listIter.next());
+        }
     }
 }
