@@ -1,6 +1,6 @@
 package ru.kostylev.ksjavacore;
 
 @FunctionalInterface
-public interface AutorHolder {
+public interface AuthorHolder  {
     String getAuthor();
 }

@@ -3,7 +3,7 @@ package ru.kostylev.ksjavacore;
 import java.util.*;
 
 
-public class MyList<T> implements List<T>,AutorHolder{
+public class MyList<T> implements List<T>,AuthorHolder {
     private int size; // поле содержащее размер коллекции
     private Object[] list; // поле содержащие коллекцию ввиде масива
     private static final int DEFAULT_LENGTH = 10;
