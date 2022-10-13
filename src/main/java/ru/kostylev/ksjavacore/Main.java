@@ -9,7 +9,8 @@ public class Main {
         myList.add("Object 1");
         myList.add(10);
         myList.add("Object 3");
-        myList.add("Object 4");
+        myList.add(true);
+        myList.add('A');
 
         //создание из другой коллекции
         MyList myList1 = new MyList(myList);

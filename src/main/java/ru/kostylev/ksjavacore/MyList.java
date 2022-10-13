@@ -279,13 +279,24 @@ public class MyList<T> implements List<T>,AuthorHolder {
         }
         return newlist;
     }
-
+    private String listString(){
+        String txt = "";
+        for(int i = 0 ; i<size; i++){
+            if (i != size-1){
+                txt += list[i] + ", ";
+            } else{
+                txt += list[i];
+            }
+        }
+        return txt;
+    }
 
     @Override
     public String toString() {
         return  "size=" + size +
-                ", list=" + Arrays.toString(list);
+                ", list=[" + listString() + "]";
     }
+
 
     @Override
     public String getAuthor() {
