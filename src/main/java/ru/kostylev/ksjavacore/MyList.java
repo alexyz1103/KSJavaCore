@@ -3,7 +3,7 @@ package ru.kostylev.ksjavacore;
 import java.util.*;
 
 
-public class MyList<T> implements List<T> {
+public class MyList<T> implements List<T>,AutorHolder{
     private int size; // поле содержащее размер коллекции
     private Object[] list; // поле содержащие коллекцию ввиде масива
     private static final int DEFAULT_LENGTH = 10;
@@ -287,6 +287,11 @@ public class MyList<T> implements List<T> {
                 ", list=" + Arrays.toString(list);
     }
 
+    @Override
+    public String getAuthor() {
+        return "Костылев Александр";
+    }
+
 
     public class ListItr implements ListIterator<T>{
         int cursor;
@@ -347,5 +352,7 @@ public class MyList<T> implements List<T> {
         public void add(T t) {
             MyList.this.add(previousIndex(),t);
         }
+
     }
+
 }

@@ -49,5 +49,7 @@ public class Main {
         while(listIter.hasNext()){
             System.out.println("Работа итератора: " + listIter.next());
         }
+
+        System.out.println(myList.getAuthor());
     }
 }
